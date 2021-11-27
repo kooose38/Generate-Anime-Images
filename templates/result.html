@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+ <div style="text-align:center">
+   <img src={{ result_output["path"] }}>
+   <ul>
+     {% for result in result_output["predict"] %}
+     <li>予測: {{ result["predict"] }} 確率: {{ result["score"] }}</li>
+     {% endfor %}
+   </ul>
+    <h2>予測結果は{{ result_output["path"] }}です。</h2>
+    <button><a href="/">戻る</a></button>
+ </div>
+
+{% endblock %}
