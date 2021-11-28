@@ -13,11 +13,12 @@ def index():
 @app.route("/predict", methods=["POST"])
 def predict():
    uid = str(uuid.uuid4())[:4]
-   res = generated_img(uid)
+   img = generated_img(uid)
+   print("[INFO] successfully GAN.")
 
-   print(res)
+   detected_predict = detect(img)
 
-   detected_predict = detect(f"images/{uid}.png")
+   print("[INFO] successfully DETECT.")
 
    result_output = {
       "path": f"images/{uid}.png", 

@@ -2,7 +2,7 @@ import json
 import torch 
 
 from backend.vgg.constant import CFG
-from backend.vgg.dataset import AnimeDetectDataset
+from backend.vgg.dataset import get_detect_dataset
 from backend.vgg.net import AnimeDetectModel
 
 def load_model(n_classes, config):
@@ -14,22 +14,23 @@ def load_model(n_classes, config):
          )
       )
    net.eval()
+   print("[INFO] success loading for detect model!")
    return net 
 
 
 def load_label(file):
-   with open(file, "r") as f:
+   with open(file) as f:
       label = json.load(f)
    return {int(k): v for k, v in label.items()}
 
 
-def detect(file):
+def detect(img):
    config = CFG()
    index2label = load_label(config.label_path)
    net = load_model(len(index2label), config)
 
-   ds = AnimeDetectDataset(file, config)
-   dl = ds[0].unsqueeze(0) # [batch, C, W, H]
+   ds = get_detect_dataset(img, config)
+   dl = ds.unsqueeze(0) # [batch, C, W, H]
 
    with torch.no_grad():
       output = net(dl)
@@ -40,7 +41,7 @@ def detect(file):
       results = []
       for p, idx in zip(pred, pred_id):
          result = {
-            "score": p, 
+            "score": round(p, 2) * 100, 
             "predict": index2label[int(idx)]
          }
          results.append(result)
